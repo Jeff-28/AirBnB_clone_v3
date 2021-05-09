@@ -1,28 +1,35 @@
 #!/usr/bin/python3
 """ module returns a JSON:OK"""
-from models import storage
-from flask import Flask, Blueprint, jsonify
+from flask import jsonify
 from api.v1.views import app_views
+from models import storage
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.user import User
+from models.review import Review
 
 
-classes = {"amenities": Amenity, "cities": City, "places": Place,
-          "reviews": Review, "states": State, "users": User}
+classes = {"amenities": Amenity, "cities": City,
+           "places": Place, "reviews": Review, "states": State, "users": User}
 
 
 @app_views.route('/status', strict_slashes=False)
 def status():
-    """returns a JSON: OK"""
+    """Return the ok status"""
     return jsonify({"status": "OK"})
 
 
 @app_views.route('/stats', strict_slashes=False)
-def num_obj():
-    """num_objects"""
-    obj_dict = {}
+def stats():
+    """Return the objs in a class"""
+    new_dict = {}
     for key, value in classes.items():
-        obj_dict[key] = storage.count(value)
-    return jsonify(obj_dict)
+        new_dict[key] = storage.count(value)
+    return jsonify(new_dict)
 
 
 if __name__ == "__main__":
+    """should not be executed"""
     pass
