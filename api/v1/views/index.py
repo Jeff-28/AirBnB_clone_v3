@@ -1,4 +1,4 @@
-#!/usr/bin/pythone3
+#!/usr/bin/python3
 """ module returns a JSON:OK"""
 from models import storage
 from flask import Flask, Blueprint, jsonify
