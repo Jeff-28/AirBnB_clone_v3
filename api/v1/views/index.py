@@ -5,8 +5,8 @@ from flask import Flask, Blueprint, jsonify
 from api.v1.views import app_views
 
 
-clases = {"amenities": "Amenity", "cities": "City", "places": "Place",
-          "reviews": "Review", "states": "State", "users": "User"}
+classes = {"amenities": Amenity, "cities": City, "places": Place,
+          "reviews": Review, "states": State, "users": User}
 
 
 @app_views.route('/status', strict_slashes=False)
@@ -19,7 +19,7 @@ def status():
 def num_obj():
     """num_objects"""
     obj_dict = {}
-    for key, value in obj_text.items():
+    for key, value in classes.items():
         obj_dict[key] = storage.count(value)
     return jsonify(obj_dict)
 
