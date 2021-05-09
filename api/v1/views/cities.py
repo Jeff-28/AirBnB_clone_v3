@@ -17,7 +17,7 @@ def get_cities(state_id):
     if state:
         for city in state.cities:
             cities_list.append(city.to_dict())
-            return jsonify(cities_list)
+        return jsonify(cities_list)
     else:
         abort(404)
 
@@ -37,12 +37,12 @@ def get_city(city_id):
 def delete_cities(city_id):
     """Deletes a City object"""
     city = storage.get(City, city_id)
-    if city in None:
+    if city is None:
         abort(404)
-        city_dict = {}
-        city.delete()
-        storage.save()
-        return jsonify(city_dict), 200
+    city_dict = {}
+    city.delete()
+    storage.save()
+    return jsonify(city_dict), 200
 
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
