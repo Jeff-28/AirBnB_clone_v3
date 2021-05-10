@@ -8,6 +8,7 @@ from models import storage
 from models.state import State
 from models.amenity import Amenity
 from models.place import Place
+from models.user import User
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -56,7 +57,8 @@ def create_place(city_id):
         abort(400, "Not a JSON")
     if "user_id" not in my_dict:
         abort(400, "Missing user_id")
-    if storage.get(User, my_dict["user_id"]) is None:
+    user = storage.get('User', my_dict["user_id"])
+    if user is None:
         abort(404)
     if "name" not in my_dict:
         abort(400, "Missing name")
