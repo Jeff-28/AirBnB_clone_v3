@@ -5,6 +5,8 @@ from models import storage
 from flask import Blueprint, make_response
 from flask import Flask, jsonify
 from api.v1.views import app_views
+from flask_cors import CORS
+
 
 cors = CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
 app = Flask(__name__)
