@@ -49,6 +49,6 @@ def post_place_amenity(place_id, amenity_id):
         abort(404)
     if amenity in place.amenities:
         return jsonify(amenity.to_dict())
-    place_amenity_ids.append(amenity)
+    place.amenity_ids.append(amenity)
     place.save()
     return make_response(jsonify(amenityto_dict()), 201)
