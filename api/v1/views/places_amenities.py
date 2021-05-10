@@ -12,7 +12,7 @@ from models.review import Review
 
 
 @app_views.route('/places/<string:place_id>/amenities', methods=['GET'],
-                strict_slashes=False)
+                 strict_slashes=False)
 def get_palce_amenity(place_id):
     """Retrieves the list of all Amenity objects of a Place"""
     place = storage.get('Place', place_id)
@@ -25,7 +25,7 @@ def get_palce_amenity(place_id):
 
 
 @app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>',
-                    methods=['DELETE'], strict_slashes=False)
+                 methods=['DELETE'], strict_slashes=False)
 def delete_place_amenity(place_id, amenity_id):
     """Deletes a Amenity object to a Place"""
     place = storage.get("Place", place_id)
@@ -52,7 +52,3 @@ def post_place_amenity(place_id, amenity_id):
     place_amenity_ids.append(amenity)
     place.save()
     return make_response(jsonify(amenityto_dict()), 201)
-
-
-
-
