@@ -7,6 +7,7 @@ from models.base_model import BaseModel
 from models import storage
 from models.state import State
 from models.amenity import Amenity
+from models.place import Place
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -15,7 +16,7 @@ def get_places(city_id):
     """Retrieves the list of all Place objects of a City"""
     places_list = []
     city = storage.get(City, city_id)
-    if City is None:
+    if city is None:
         abort(404)
     for place in city.places:
         places_list.append(place.to_dict())
