@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Module handles all default RestFul API actions"""
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, make_response
 from api.v1.views import app_views
 from models.city import City
 from models.base_model import BaseModel
@@ -87,21 +87,20 @@ def update_place(place_id):
 @app_views.route('/places_search', methods=['POST'], strict_slashes=False)
 def post_places_search():
     """searches for a place"""
-    json_req = request.get_json()
-    if json_req is not None:
-        params = json_req
+    if request.get_json() is not None:
+        params = request.get_json()
         states = params.get('states', [])
         cities = params.get('cities', [])
         amenities = params.get('amenities', [])
-        amenity_obj = []
+        amenity_objects = []
         for amenity_id in amenities:
             amenity = storage.get('Amenity', amenity_id)
             if amenity:
-                amenity_obj.append(amenity)
+                amenity_objects.append(amenity)
         if states == cities == []:
             places = storage.all('Place').values()
         else:
-            place = []
+            places = []
             for state_id in states:
                 state = storage.get('State', state_id)
                 state_cities = state.cities
@@ -112,14 +111,14 @@ def post_places_search():
                 city = storage.get('City', city_id)
                 for place in city.places:
                     places.append(place)
-        get_places = []
+        confirmed_places = []
         for place in places:
             place_amenities = place.amenities
-            get_places.append(place.to_dict())
-            for amenity in amenity_obj:
+            confirmed_places.append(place.to_dict())
+            for amenity in amenity_objects:
                 if amenity not in place_amenities:
-                    get_places.pop()
+                    confirmed_places.pop()
                     break
-        return jsonify(get_places)
+        return jsonify(confirmed_places)
     else:
-        return jsonify({'error': 'Not a JSON'}), 400
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
