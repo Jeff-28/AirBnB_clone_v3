@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Module handles all default RestFul API actions"""
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, make_response
 from api.v1.views import app_views
 from models.city import City
 from models.base_model import BaseModel

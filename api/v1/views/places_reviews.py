@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Module handles all default RestFul API actions"""
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, make_response
 from api.v1.views import app_views
 from models.city import City
 from models.base_model import BaseModel
@@ -15,7 +15,7 @@ from models.review import Review
                  methods=['GET'], strict_slashes=False)
 def get_reviews(place_id):
     """Retrieves the list of all Review objects of a Place"""
-    place = storage.get(Place, place_id)
+    place = storage.get('Place', place_id)
     list_reviews = []
     if place is None:
         abort(404)
@@ -28,7 +28,7 @@ def get_reviews(place_id):
                  strict_slashes=False)
 def get_review(review_id):
     """Retrieves a Review object"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
     if review is None:
         abort(404)
     return jsonify(review.to_dict())
@@ -38,7 +38,7 @@ def get_review(review_id):
                  strict_slashes=False)
 def delete_review(review_id):
     """Deletes a Review object"""
-    review = storage.get(Review, review_id)
+    review = storage.get('Review', review_id)
     if review is None:
         abort(404)
     empty_dict = {}
@@ -51,41 +51,39 @@ def delete_review(review_id):
                  strict_slashes=False)
 def create_review(place_id):
     """Creates a Review object"""
-    place = storage.get(Place, place_id)
+    place = storage.get('Place', place_id)
     if place is None:
         abort(404)
-    my_dict = request.get_json()
-    if my_dict is None:
+    json_req = request.get_json()
+    if json_req is None:
         abort(400, "Not a JSON")
-    if "user_id" not in my_dict:
+    if "user_id" not in json_req:
         abort(400, "Missing user_id")
-    user = storage.get(User, my_dict["user_id"])
+    user = storage.get('User', json_req["user_id"])
     if user is None:
         abort(404)
-    if "text" not in my_dict:
+    if "text" not in json_req:
         abort(400, "Missing text")
-    my_dict["place_id"] = place_id
-    new_review = Review(**my_dict)
+    json_req["place_id"] = place_id
+    new_review = Review(**json_req)
     new_review.save()
     return jsonify(new_review.to_dict()), 201
 
 
-@app_views.route('/reviews/<review_id>',
-                 methods=['PUT'],
+@app_views.route('/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_review(review_id):
     """Update a Review object"""
-    if review_id:
-        my_dict = request.get_json()
-        review = storage.get(Review, review_id)
-        if review is None:
-            abort(404)
-        if my_dict is None:
-            abort(400, "Not a JSON")
-        for key, value in my_dict.items():
-            if key not in ["id", "created_at",
-                           "updated_at", "user_id",
-                           "place_id"]:
-                setattr(review, key, value)
-        storage.save()
-        return jsonify(review.to_dict()), 200
+    json_req = request.get_json()
+    review = storage.get('Review', review_id)
+    if review is None:
+        abort(404)
+    if json_req is None:
+        abort(400, "Not a JSON")
+    for key, value in json_req.items():
+        if key not in ["id", "created_at",
+                       "updated_at", "user_id",
+                       "place_id"]:
+            setattr(review, key, value)
+    review.save()
+    return jsonify(review.to_dict()), 200
